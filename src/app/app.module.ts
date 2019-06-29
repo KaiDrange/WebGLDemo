@@ -9,11 +9,11 @@ import { DemoTriangleComponent } from './demo-triangle/demo-triangle.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HttpClientModule,
     DemoTriangleComponent
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule
   ],
   providers: [],
