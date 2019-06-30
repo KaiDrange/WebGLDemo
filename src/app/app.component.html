@@ -2,8 +2,10 @@
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Triangle">Triangle<br/>
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Colours">Colours<br/>
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Animation">Animation<br/>
+    <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Cube">Cube<br/>
 </form>
 
 <app-demo-triangle *ngIf="selectedDemo == 'Triangle'"></app-demo-triangle>
 <app-demo-colours *ngIf="selectedDemo == 'Colours'"></app-demo-colours>
 <app-demo-animation *ngIf="selectedDemo == 'Animation'"></app-demo-animation>
+<app-demo-cube *ngIf="selectedDemo == 'Cube'"></app-demo-cube>

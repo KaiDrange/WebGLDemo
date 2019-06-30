@@ -1,0 +1,14 @@
+<div class="info">
+        <h3>Cube demo:</h3>
+        <p>In this demo gl.drawArrays() in drawScene() is replaced with gl.drawElements().
+        This is because the model vertex data is arranged differently. Instead of an array of
+        vertices forming triangles directly, a new array of indices points to which of the
+        vertices should be used in the triangles. This way to organize data makes more sense
+        as models get more complex as the same vertex can be part of several triangles.</p>
+    
+        <p>Also, depth test is enabled in initWebGL() and the depth buffer cleared in drawScene().
+        The reason for this is that now that the model is a 3D object, the fragments that are behind
+        other fragments should not be drawn.</p>
+    </div>
+    <canvas #glCanvas></canvas>
+    

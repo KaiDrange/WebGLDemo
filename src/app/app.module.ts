@@ -8,13 +8,15 @@ import { AppComponent } from './app.component';
 import { DemoTriangleComponent } from './demo-triangle/demo-triangle.component';
 import { DemoColoursComponent } from './demo-colours/demo-colours.component';
 import { DemoAnimationComponent } from './demo-animation/demo-animation.component';
+import { DemoCubeComponent } from './demo-cube/demo-cube.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DemoTriangleComponent,
     DemoColoursComponent,
-    DemoAnimationComponent
+    DemoAnimationComponent,
+    DemoCubeComponent
   ],
   imports: [
     BrowserModule,
