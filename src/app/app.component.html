@@ -1,1 +1,7 @@
-<app-demo-triangle></app-demo-triangle>
+<form>
+    <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Triangle">Triangle<br/>
+    <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Colours">Colours<br/>
+    <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Animation">Animation<br/>
+</form>
+
+<app-demo-triangle *ngIf="selectedDemo == 'Triangle'" #triangle></app-demo-triangle>

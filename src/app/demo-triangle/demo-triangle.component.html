@@ -1,1 +1,12 @@
-<canvas height="600" width="600" #glCanvas></canvas>
+<pre style="float: left">
+    Triangle demo:
+    The "Hello World" of WebGL, I guess. Key concepts:
+    - Get WebGL context from a HTML canvas element (in initWebGL())
+    - Load vertex and fragment shader GLSL source code as strings (in loadAssets())
+    - Compile shaders (in createShaders())
+    - ...then link the shaders into a program (in createProgram())
+    - Create a simple model with three vertices
+    - Create an array buffer for the vertices (in initArrayBuffer())
+    - Draw the triangle (in drawScene())     
+</pre>
+<canvas #glCanvas></canvas>
