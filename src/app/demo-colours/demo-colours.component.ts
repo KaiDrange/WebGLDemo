@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-demo-triangle',
-  templateUrl: './demo-triangle.component.html',
-  styleUrls: ['./demo-triangle.component.scss']
+  selector: 'app-demo-colours',
+  templateUrl: './demo-colours.component.html',
+  styleUrls: ['./demo-colours.component.scss']
 })
 
-export class DemoTriangleComponent implements OnInit {
+export class DemoColoursComponent implements OnInit {
   @ViewChild("glCanvas", {static: true}) glCanvas: ElementRef<HTMLCanvasElement>;
   gl: WebGLRenderingContext;
   vshaderSource: string;
@@ -27,6 +27,7 @@ export class DemoTriangleComponent implements OnInit {
     this.initWebGL();
     if (this.gl) {
       this.initArrayBuffer(this.model.vertices, this.model.vertexSize, this.gl.FLOAT, 'a_Position', this.program);
+      this.initArrayBuffer(this.model.vertexColours, this.model.colourSize, this.gl.FLOAT, 'a_Colour', this.program);
       this.drawScene();
     }
   }
@@ -72,8 +73,8 @@ export class DemoTriangleComponent implements OnInit {
   }
 
   async loadAssets() {
-    this.vshaderSource = await this.httpClient.get('assets/DemoTriangle_v.glsl', { responseType: 'text' }).toPromise();
-    this.fshaderSource = await this.httpClient.get('assets/DemoTriangle_f.glsl', { responseType: 'text' }).toPromise();
+    this.vshaderSource = await this.httpClient.get('assets/DemoColours_v.glsl', { responseType: 'text' }).toPromise();
+    this.fshaderSource = await this.httpClient.get('assets/DemoColours_f.glsl', { responseType: 'text' }).toPromise();
   }
 
   createShader(type: number, source: string): WebGLShader {
@@ -106,7 +107,21 @@ export class DemoTriangleComponent implements OnInit {
       vertices: new Float32Array([
         -0.5, -0.5, 0.0,
          0.5, -0.5, 0.0,
-         0.0, 0.5, 0.0
+         -0.5, 0.5, 0.0,
+
+         0.5, -0.5, 0.0,
+         -0.5, 0.5, 0.0,
+         0.5, 0.5, 0.0
+      ]),
+      colourSize: 4, // RGBA
+      vertexColours: new Float32Array([
+        1.0, 0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 1.0,
+
+        0.5, 0.5, 0.5, 1.0,
+        0.5, 0.5, 0.5, 1.0,
+        0.5, 0.5, 0.5, 1.0
       ])
     };
   }
@@ -128,4 +143,7 @@ export class DemoTriangleComponent implements OnInit {
 class Model {
   vertices: Float32Array;
   vertexSize: number;
+
+  vertexColours: Float32Array;
+  colourSize: number;
 }

@@ -6,11 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DemoTriangleComponent } from './demo-triangle/demo-triangle.component';
+import { DemoColoursComponent } from './demo-colours/demo-colours.component';
+import { DemoAnimationComponent } from './demo-animation/demo-animation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DemoTriangleComponent
+    DemoTriangleComponent,
+    DemoColoursComponent,
+    DemoAnimationComponent
   ],
   imports: [
     BrowserModule,

@@ -4,4 +4,6 @@
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Animation">Animation<br/>
 </form>
 
-<app-demo-triangle *ngIf="selectedDemo == 'Triangle'" #triangle></app-demo-triangle>
+<app-demo-triangle *ngIf="selectedDemo == 'Triangle'"></app-demo-triangle>
+<app-demo-colours *ngIf="selectedDemo == 'Colours'"></app-demo-colours>
+<app-demo-animation *ngIf="selectedDemo == 'Animation'"></app-demo-animation>

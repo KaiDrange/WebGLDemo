@@ -1,12 +1,14 @@
-<pre style="float: left">
-    Triangle demo:
-    The "Hello World" of WebGL, I guess. Key concepts:
-    - Get WebGL context from a HTML canvas element (in initWebGL())
-    - Load vertex and fragment shader GLSL source code as strings (in loadAssets())
-    - Compile shaders (in createShaders())
-    - ...then link the shaders into a program (in createProgram())
-    - Create a simple model with three vertices
-    - Create an array buffer for the vertices (in initArrayBuffer())
-    - Draw the triangle (in drawScene())     
-</pre>
+<div class="info">
+    <h3>Triangle demo:</h3>
+    <p>The "Hello World" of WebGL, I guess. Key concepts:</p>
+    <ul>
+        <li>Get WebGL context from a HTML canvas element (in initWebGL())</li>
+        <li>Load vertex and fragment shader GLSL source code as strings (in loadAssets())</li>
+        <li>Compile shaders (in createShaders()) and then link the shaders into a program
+            (in createProgram())</li>
+        <li>Create a simple model with three vertices</li>
+        <li>Create an array buffer for the vertices (in initArrayBuffer())</li>
+        <li>Draw the triangle (in drawScene())</li>
+    </ul>
+</div>
 <canvas #glCanvas></canvas>

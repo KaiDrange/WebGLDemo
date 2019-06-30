@@ -1,0 +1,18 @@
+<div class="info">
+    <h3>Animation demo:</h3>
+    <p>This demo introduces transformations. Translation (movement), scaling and rotation.
+    A model matrix with these transformations are passed on to the vertex shader, which then
+    mutiplies this matrix with the vertex position. The gl-matrix library is used for the matrix
+    and vector math.</p>
+
+    <p>window.requestAnimationFrame() calls drawScene() whenever it is time to redraw the next
+    animation frame. To make the animation constant regardless of framerate, all animation
+    speeds are scaled by how much time has passed since the previous frame.</p>
+
+    <p>In the vertex shader, the 'uniform' keyword is introduced. This is for values that
+    doesn't change per vertex/fragment. The model matrix is the same for all vertices, therefore u_ModelMatrix
+    is uniform. The 'attribute' keyword, is the opposite. This is used for values that change per vertex.
+    The coordinates of a vertex would be such a value. Therefore 'attribute' is used for a_Position. 'attribute'
+    variables is for vertices, so they can't be used in the fragment shader.</p>
+</div>
+<canvas #glCanvas></canvas>
