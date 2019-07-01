@@ -2,14 +2,13 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { HttpClient } from '@angular/common/http';
 import { mat4, vec3 } from 'gl-matrix';
 
-
 @Component({
-  selector: 'app-demo-cube',
-  templateUrl: './demo-cube.component.html',
-  styleUrls: ['./demo-cube.component.scss']
+  selector: 'app-demo-perspective',
+  templateUrl: './demo-perspective.component.html',
+  styleUrls: ['./demo-perspective.component.scss']
 })
 
-export class DemoCubeComponent implements OnInit {
+export class DemoPerspectiveComponent implements OnInit {
   @ViewChild("glCanvas", {static: true}) glCanvas: ElementRef<HTMLCanvasElement>;
   gl: WebGLRenderingContext;
   vshaderSource: string;
@@ -18,6 +17,8 @@ export class DemoCubeComponent implements OnInit {
   model: Model;
   prevDrawTime: number;
   u_ModelMatrix: WebGLUniformLocation;
+  u_ViewMatrix: WebGLUniformLocation;
+  u_ProjectionMatrix: WebGLUniformLocation;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -54,6 +55,14 @@ export class DemoCubeComponent implements OnInit {
     gl.useProgram(this.program);
 
     this.u_ModelMatrix = gl.getUniformLocation(this.program, 'u_ModelMatrix');
+    this.u_ProjectionMatrix = gl.getUniformLocation(this.program, 'u_ProjectionMatrix');
+    this.u_ViewMatrix = gl.getUniformLocation(this.program, 'u_ViewMatrix');
+
+    this.setProjectionMatrix();
+
+    const viewMatrix = mat4.create();
+    mat4.lookAt(viewMatrix, [0.0, 0.0, -5.0], [0.0, 0.0, 100], [0.0, 1.0, 0.0]);
+    gl.uniformMatrix4fv(this.u_ViewMatrix, false, viewMatrix);
   }
 
   drawScene() {
@@ -110,8 +119,8 @@ export class DemoCubeComponent implements OnInit {
   }
 
   async loadAssets() {
-    this.vshaderSource = await this.httpClient.get('assets/DemoCube_v.glsl', { responseType: 'text' }).toPromise();
-    this.fshaderSource = await this.httpClient.get('assets/DemoCube_f.glsl', { responseType: 'text' }).toPromise();
+    this.vshaderSource = await this.httpClient.get('assets/DemoPerspective_v.glsl', { responseType: 'text' }).toPromise();
+    this.fshaderSource = await this.httpClient.get('assets/DemoPerspective_f.glsl', { responseType: 'text' }).toPromise();
   }
 
   createShader(type: number, source: string): WebGLShader {
@@ -142,6 +151,17 @@ export class DemoCubeComponent implements OnInit {
     const indexBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.model.indices, this.gl.STATIC_DRAW);
+  }
+
+  setProjectionMatrix() {
+    const fieldOfView = (90 * Math.PI)/180;
+    const ratio =  this.gl.canvas.clientWidth/this.gl.canvas.clientHeight;
+    const near = 1;
+    const far = 100;
+
+    const pMatrix = mat4.create();
+    mat4.perspective(pMatrix, fieldOfView, ratio, near, far);
+    this.gl.uniformMatrix4fv(this.u_ProjectionMatrix, false, pMatrix);
   }
 
   createModel() {
@@ -175,7 +195,7 @@ export class DemoCubeComponent implements OnInit {
       animation: {
         position: vec3.fromValues(0.0, 0.0, 0.0),
         movementSpeed: vec3.fromValues(1.0, 0.35, 0.0),
-        scale: vec3.fromValues(0.3, 0.3, 0.3),
+        scale: vec3.fromValues(1.0, 1.0, 1.0),
         angle: vec3.fromValues(0.0, 0.0, 0.0),
         rotationSpeed: vec3.fromValues(0.5, 0.3, 1.0)
       }
@@ -191,7 +211,8 @@ export class DemoCubeComponent implements OnInit {
     if (this.gl.canvas.width != this.gl.canvas.clientWidth || this.gl.canvas.height != this.gl.canvas.clientHeight) {
         this.gl.canvas.width  = this.gl.canvas.clientWidth;
         this.gl.canvas.height = this.gl.canvas.clientHeight;
-        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);  
+        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        this.setProjectionMatrix();
       }
   }
 }

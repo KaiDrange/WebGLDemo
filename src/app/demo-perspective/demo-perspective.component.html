@@ -1,0 +1,17 @@
+<div class="info">
+        <h3>Perspective demo:</h3>
+        <p>The changes from the Cube demo might be a bit subtle. The difference is that now objects
+        further away gets smaller. This is achieved with a projection matrix defining field of view,
+        the limits for how near or far away vertices should be to be rendered and the width/height
+        ratio. See setProjectionMatrix() and the vertex shader.</p>
+    
+        <p>A 'camera' is also introduced. This is a view matrix defining where the camera is, in what
+        direction it is looking, and which direction is considered up. This is also used in the vertex
+        shader.</p>
+
+        <p>It would be more efficient to multiply these once and pass the result to the vertex shader
+        instead of multiplying them for each vertex in the shader as done here. I've done it this way
+        for clarity.</p>
+    </div>
+    <canvas #glCanvas></canvas>
+    
