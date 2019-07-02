@@ -1,0 +1,22 @@
+<div class="info">
+        <h3>Light demo:</h3>
+        <p>In this demo, a linear light source (some light far away like the sun) is simulated. In
+        addition, an ambient light has been added (light that is 'everywhere' in the scene. Without it
+        a fragment not lit up by the linear light would be completely black.</p>
+
+        <p>The model now has a new array with 'normals'. These are vectors that indicates which way
+        the surface of the object is facing. The normals are used to calculate where light from a light
+        source will hit the object, and how much the colour of each fragment should be affected by the
+        light.</p>
+    
+        <p>When the object is transformed, the normals must be corrected for this change. Therefore the
+        inverse of the model matrix is transposed and passed to the vertex shader as u_NormalMatrix to correct
+        for the transformations done by the model matrix. See end of animateModel().</p>
+
+        <p>The actual calculation of the angle between the object surface and light direction is done
+        in the fragment shader. The basic math is cos angle = (normal dot light) / (|normal|*|light|),
+        but since the lengths of both normal and light are normalized (i.e. length = 1), you end up with
+        cos angle = normal dot light.</p>
+    </div>
+    <canvas #glCanvas></canvas>
+    

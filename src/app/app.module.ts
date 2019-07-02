@@ -10,6 +10,7 @@ import { DemoColoursComponent } from './demo-colours/demo-colours.component';
 import { DemoAnimationComponent } from './demo-animation/demo-animation.component';
 import { DemoCubeComponent } from './demo-cube/demo-cube.component';
 import { DemoPerspectiveComponent } from './demo-perspective/demo-perspective.component';
+import { DemoLightComponent } from './demo-light/demo-light.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { DemoPerspectiveComponent } from './demo-perspective/demo-perspective.co
     DemoColoursComponent,
     DemoAnimationComponent,
     DemoCubeComponent,
-    DemoPerspectiveComponent
+    DemoPerspectiveComponent,
+    DemoLightComponent
   ],
   imports: [
     BrowserModule,
