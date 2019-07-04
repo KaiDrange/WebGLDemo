@@ -49,6 +49,10 @@ export class DemoPerspectiveComponent implements OnInit {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+    gl.frontFace(gl.CCW);
+
     const vshader = this.createShader(gl.VERTEX_SHADER, this.vshaderSource);
     const fshader = this.createShader(gl.FRAGMENT_SHADER, this.fshaderSource);
     this.createProgram(vshader, fshader);
@@ -61,7 +65,7 @@ export class DemoPerspectiveComponent implements OnInit {
     this.setProjectionMatrix();
 
     const viewMatrix = mat4.create();
-    mat4.lookAt(viewMatrix, [0.0, 0.0, -5.0], [0.0, 0.0, 100], [0.0, 1.0, 0.0]);
+    mat4.lookAt(viewMatrix, [0.0, 0.0, 5.0], [0.0, 0.0, -100], [0.0, 1.0, 0.0]);
     gl.uniformMatrix4fv(this.u_ViewMatrix, false, viewMatrix);
   }
 

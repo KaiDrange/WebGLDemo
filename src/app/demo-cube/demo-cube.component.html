@@ -6,9 +6,15 @@
         vertices should be used in the triangles. This way to organize data makes more sense
         as models get more complex as the same vertex can be part of several triangles.</p>
     
-        <p>Also, depth test is enabled in initWebGL() and the depth buffer cleared in drawScene().
-        The reason for this is that now that the model is a 3D object, the fragments that are behind
-        other fragments should not be drawn.</p>
+        <p>Now that this is a solid 3D model, the backside of the object will be covered by the frontside
+        and should not be drawn. This is achieved by telling WebGL that triangles where the order of the
+        vertices are arranged counter-clockwise are front facing, and the ones that are clockwise are the
+        backside and should be skipped. See the culling settings in initWebGL().</p>
+            
+        <p>Also, depth test is enabled in initWebGL() and the depth buffer cleared in drawScene(). The
+        depth buffer keeps track of the frontmost fragment drawn. As long as there is no transparency
+        involved, a fragment behind one already rendered should be skipped. Because of the face culling,
+        enabling the depth buffer doesn't actually do anything in this demo. However, it would
+        be relevant if there were more than one object in the scene.</p>
     </div>
     <canvas #glCanvas></canvas>
-    

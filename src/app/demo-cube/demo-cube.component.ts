@@ -48,6 +48,10 @@ export class DemoCubeComponent implements OnInit {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+    gl.frontFace(gl.CCW);
+
     const vshader = this.createShader(gl.VERTEX_SHADER, this.vshaderSource);
     const fshader = this.createShader(gl.FRAGMENT_SHADER, this.fshaderSource);
     this.createProgram(vshader, fshader);

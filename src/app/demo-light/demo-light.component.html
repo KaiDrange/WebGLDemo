@@ -5,9 +5,8 @@
         a fragment not lit up by the linear light would be completely black.</p>
 
         <p>The model now has a new array with 'normals'. These are vectors that indicates which way
-        the surface of the object is facing. The normals are used to calculate where light from a light
-        source will hit the object, and how much the colour of each fragment should be affected by the
-        light.</p>
+        the surface of the object is facing. The normals are used to calculate the angle between the light
+        rays and object surface. The smaller the angle, the brighter the fragment colour should be.</p>
     
         <p>When the object is transformed, the normals must be corrected for this change. Therefore the
         inverse of the model matrix is transposed and passed to the vertex shader as u_NormalMatrix to correct
@@ -16,7 +15,11 @@
         <p>The actual calculation of the angle between the object surface and light direction is done
         in the fragment shader. The basic math is cos angle = (normal dot light) / (|normal|*|light|),
         but since the lengths of both normal and light are normalized (i.e. length = 1), you end up with
-        cos angle = normal dot light.</p>
+        cos angle = normal dot light. Naturally, light pointing in the opposite direction should not
+        darken the colour, so the negative quadrants of cos are ignored and 0 used instead.</p>
+
+        <p>This model is 'Dennis Posed 004' downloaded from <a href="http://www.free3D.com">Free3D.com</a>.
+        I converted the model to json using this <a href="http://www.greentoken.de/onlineconv/">online converter</a>.</p>
     </div>
     <canvas #glCanvas></canvas>
     

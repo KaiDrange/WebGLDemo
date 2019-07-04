@@ -16,10 +16,9 @@ export class DemoLightComponent implements OnInit {
   program: WebGLProgram;
   model: Model;
   prevDrawTime: number;
-  u_ModelMatrix: WebGLUniformLocation;
-  u_ViewMatrix: WebGLUniformLocation;
-  u_ProjectionMatrix: WebGLUniformLocation;
+  u_MVPMatrix: WebGLUniformLocation;
   u_NormalMatrix: WebGLUniformLocation;
+  jsonModel: any;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -29,7 +28,6 @@ export class DemoLightComponent implements OnInit {
     this.initWebGL();
     if (this.gl) {
       this.initArrayBuffer(this.model.vertices, this.model.vertexSize, this.gl.FLOAT, 'a_Position', this.program);
-      this.initArrayBuffer(this.model.vertexColours, this.model.colourSize, this.gl.FLOAT, 'a_Colour', this.program);
       this.initArrayBuffer(this.model.normals, this.model.normalSize, this.gl.FLOAT, 'a_Normal', this.program);
       this.initIndexBuffer();
       this.setLights();
@@ -52,27 +50,23 @@ export class DemoLightComponent implements OnInit {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+    gl.frontFace(gl.CCW);
+
     const vshader = this.createShader(gl.VERTEX_SHADER, this.vshaderSource);
     const fshader = this.createShader(gl.FRAGMENT_SHADER, this.fshaderSource);
     this.createProgram(vshader, fshader);
     gl.useProgram(this.program);
 
-    this.u_ModelMatrix = gl.getUniformLocation(this.program, 'u_ModelMatrix');
-    this.u_ProjectionMatrix = gl.getUniformLocation(this.program, 'u_ProjectionMatrix');
-    this.u_ViewMatrix = gl.getUniformLocation(this.program, 'u_ViewMatrix');
+    this.u_MVPMatrix = gl.getUniformLocation(this.program, 'u_MVPMatrix');
     this.u_NormalMatrix = gl.getUniformLocation(this.program, 'u_NormalMatrix');
-
-    this.setProjectionMatrix();
-
-    const viewMatrix = mat4.create();
-    mat4.lookAt(viewMatrix, [0.0, 0.0, -5.0], [0.0, 0.0, 100], [0.0, 1.0, 0.0]);
-    gl.uniformMatrix4fv(this.u_ViewMatrix, false, viewMatrix);
   }
 
   drawScene() {
     this.resizeCanvas();
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    this.gl.drawElements(this.gl.TRIANGLES, this.model.indices.length, this.gl.UNSIGNED_BYTE, 0);
+    this.gl.drawElements(this.gl.TRIANGLES, this.model.indices.length, this.gl.UNSIGNED_SHORT, 0);
 
     const now = Date.now();
     const timeDelta = now - this.prevDrawTime;
@@ -103,8 +97,13 @@ export class DemoLightComponent implements OnInit {
     mat4.translate(modelMatrix, modelMatrix, model.animation.position);
     mat4.rotate(modelMatrix, modelMatrix, vec3.length(model.animation.angle), model.animation.angle);
     mat4.scale(modelMatrix, modelMatrix, model.animation.scale);
+    const viewMatrix = this.createViewMatrix();
+    const projectionMatrix = this.createProjectionMatrix();
 
-    this.gl.uniformMatrix4fv(this.u_ModelMatrix, false, modelMatrix);
+    const mvpMatrix = mat4.create();
+    mat4.multiply(mvpMatrix, projectionMatrix, viewMatrix);
+    mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
+    this.gl.uniformMatrix4fv(this.u_MVPMatrix, false, mvpMatrix);
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelMatrix);
@@ -130,6 +129,7 @@ export class DemoLightComponent implements OnInit {
   async loadAssets() {
     this.vshaderSource = await this.httpClient.get('assets/DemoLight_v.glsl', { responseType: 'text' }).toPromise();
     this.fshaderSource = await this.httpClient.get('assets/DemoLight_f.glsl', { responseType: 'text' }).toPromise();
+    this.jsonModel = await this.httpClient.get('assets/Model_Dennis.json', { responseType: 'json' }).toPromise();
   }
 
   createShader(type: number, source: string): WebGLShader {
@@ -162,7 +162,7 @@ export class DemoLightComponent implements OnInit {
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.model.indices, this.gl.STATIC_DRAW);
   }
 
-  setProjectionMatrix() {
+  createProjectionMatrix(): mat4 {
     const fieldOfView = (90 * Math.PI)/180;
     const ratio =  this.gl.canvas.clientWidth/this.gl.canvas.clientHeight;
     const near = 1;
@@ -170,12 +170,18 @@ export class DemoLightComponent implements OnInit {
 
     const pMatrix = mat4.create();
     mat4.perspective(pMatrix, fieldOfView, ratio, near, far);
-    this.gl.uniformMatrix4fv(this.u_ProjectionMatrix, false, pMatrix);
+    return pMatrix;
+  }
+
+  createViewMatrix(): mat4 {
+    const viewMatrix = mat4.create();
+    mat4.lookAt(viewMatrix, [0.0, 3.0, 3.5], [0.0, 0.0, -100], [0.0, 1.0, 0.0]);
+    return viewMatrix;
   }
 
   setLights() {
     const u_LightDirection = this.gl.getUniformLocation(this.program, 'u_LightDirection');
-    const lightDirection = vec3.fromValues(-1.0, 1.0, -2.0);
+    const lightDirection = vec3.fromValues(-1.0, 1.0, 2.0);
     vec3.normalize(lightDirection, lightDirection);
     this.gl.uniform3fv(u_LightDirection, lightDirection);
 
@@ -189,47 +195,17 @@ export class DemoLightComponent implements OnInit {
 
   createModel() {
     this.model = {
-      indices: new Uint8Array([
-      0, 1, 2,   0, 2, 3,
-      4, 5, 6,   4, 6, 7,
-      8, 9,10,   8,10,11,
-      12,13,14,  12,14,15,
-      16,17,18,  16,18,19,
-      20,21,22,  20,22,23
-    ]),
-    vertexSize: 3, // XYZ
-      vertices: new Float32Array([
-        1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0,
-        1.0, 1.0, 1.0,   1.0,-1.0, 1.0,   1.0,-1.0,-1.0,   1.0, 1.0,-1.0,
-        1.0, 1.0, 1.0,   1.0, 1.0,-1.0,  -1.0, 1.0,-1.0,  -1.0, 1.0, 1.0,
-        -1.0, 1.0, 1.0,  -1.0, 1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0,-1.0, 1.0,
-        -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,
-        1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0
-      ]),
-      colourSize: 4, // RGBA
-      vertexColours: new Float32Array([
-        1.0, 1.0, 1.0, 1.0,   1.0, 1.0, 1.0, 1.0,   1.0, 1.0, 1.0, 1.0,   1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 0.0, 1.0,   1.0, 1.0, 0.0, 1.0,   1.0, 1.0, 0.0, 1.0,   1.0, 1.0, 0.0, 1.0,
-        1.0, 0.0, 1.0, 1.0,   1.0, 0.0, 1.0, 1.0,   1.0, 0.0, 1.0, 1.0,   1.0, 0.0, 1.0, 1.0,
-        0.0, 1.0, 1.0, 1.0,   0.0, 1.0, 1.0, 1.0,   0.0, 1.0, 1.0, 1.0,   0.0, 1.0, 1.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,   0.0, 1.0, 0.0, 1.0,   0.0, 1.0, 0.0, 1.0,   0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,   0.0, 0.0, 1.0, 1.0,   0.0, 0.0, 1.0, 1.0,   0.0, 0.0, 1.0, 1.0
-      ]),
+      indices: new Uint16Array([].concat.apply([], this.jsonModel.meshes[0].faces)),
+      vertexSize: 3, // XYZ
+      vertices: new Float32Array(this.jsonModel.meshes[0].vertices),
       normalSize: 3,
-      normals: new Float32Array([
-        0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,
-        1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,
-        -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,
-        0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,
-        0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0
-      ]),
+      normals: new Float32Array(this.jsonModel.meshes[0].normals),
       animation: {
         position: vec3.fromValues(0.0, 0.0, 0.0),
-        movementSpeed: vec3.fromValues(1.0, 0.35, 0.0),
-        scale: vec3.fromValues(1.0, 1.0, 1.0),
+        movementSpeed: vec3.fromValues(0.0, 0.0, 0.0),
+        scale: vec3.fromValues(0.03, 0.03, 0.03),
         angle: vec3.fromValues(0.0, 0.0, 0.0),
-        rotationSpeed: vec3.fromValues(0.5, 0.3, 1.0)
+        rotationSpeed: vec3.fromValues(0.0, 1.0, 0.0)
       }
     };
   }
@@ -244,17 +220,14 @@ export class DemoLightComponent implements OnInit {
         this.gl.canvas.width  = this.gl.canvas.clientWidth;
         this.gl.canvas.height = this.gl.canvas.clientHeight;
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-        this.setProjectionMatrix();
       }
   }
 }
 
 class Model {
-  indices: Uint8Array;
+  indices: Uint16Array;
   vertices: Float32Array;
   vertexSize: number;
-  vertexColours: Float32Array;
-  colourSize: number;
   normals: Float32Array;
   normalSize: number;
   animation: Animation;
