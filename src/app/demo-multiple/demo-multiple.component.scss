@@ -1,0 +1,18 @@
+body {
+    border: 0;
+  }
+
+  canvas {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .background {
+    position: absolute;
+    z-index: -1;
+}
+
+  .info {
+      float: left;
+      width: 35%;
+  }

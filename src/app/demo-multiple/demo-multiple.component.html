@@ -1,0 +1,23 @@
+<div class="info">
+        <h3>Multiple objects:</h3>
+        <p>Rendering a scene with more than one model require a bit of rethinking in how
+            the source code is organized. the reason for this is that some of the methods
+            called in the simpler examples needs to be called again when switching from one
+            set of buffers to the next.
+        </p>
+        <p>In this example, I've moved a lot of the previously global variables into a new
+            SceneObject class. I've also moved draw() and animate() methods to that class.
+            The idea is to let each sceneObject take care of what needs to be
+            done to render and animate itself correctly.
+        </p>
+        <p>I also decided to try an .obj loader library called 
+            <a href="https://github.com/frenchtoast747/webgl-obj-loader" target="_blank">webgl-obj-loader</a> that
+            parses some simple .obj files I exported from Blender. My lack of Blender skills meant I
+            forgot to center the models around origo, which I should have done. But since it meant the
+            rotation animations got a bit more interesting I didn't fix it.
+        </p>
+    </div>
+    <div class="background">
+        <canvas #glCanvas></canvas>
+    </div>
+    

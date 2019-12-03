@@ -38,7 +38,7 @@ export class DemoPerspectiveComponent implements OnInit {
   initWebGL() {
     let gl = this.glCanvas.nativeElement.getContext('webgl');
     if (!gl) {
-      gl = this.glCanvas.nativeElement.getContext("experimental-webgl");
+      gl = this.glCanvas.nativeElement.getContext("experimental-webgl") as WebGLRenderingContext;
     }
     if (!gl) {
       console.error("WebGL not supported");
@@ -159,7 +159,8 @@ export class DemoPerspectiveComponent implements OnInit {
 
   setProjectionMatrix() {
     const fieldOfView = (90 * Math.PI)/180;
-    const ratio =  this.gl.canvas.clientWidth/this.gl.canvas.clientHeight;
+    const canvas = this.gl.canvas as HTMLCanvasElement;
+    const ratio =  canvas.clientWidth / canvas.clientHeight;
     const near = 1;
     const far = 100;
 
@@ -206,16 +207,16 @@ export class DemoPerspectiveComponent implements OnInit {
     };
   }
 
-  @HostListener('window:resize', ['$event'])
   resizeCanvas() {
     if (!this.gl) {
       return;
     }
    
-    if (this.gl.canvas.width != this.gl.canvas.clientWidth || this.gl.canvas.height != this.gl.canvas.clientHeight) {
-        this.gl.canvas.width  = this.gl.canvas.clientWidth;
-        this.gl.canvas.height = this.gl.canvas.clientHeight;
-        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    const canvas = this.gl.canvas as HTMLCanvasElement;
+    if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
+        canvas.width  = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        this.gl.viewport(0, 0, canvas.width, canvas.height);
         this.setProjectionMatrix();
       }
   }

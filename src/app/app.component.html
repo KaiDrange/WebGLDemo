@@ -6,6 +6,7 @@
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Perspective">Perspective<br/>
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Light">Light<br/>
     <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Texture">Texture<br/>
+    <input type="radio" [(ngModel)]="selectedDemo" name="demo" value="Multiple">Multiple<br/>
 </form>
 
 <app-demo-triangle *ngIf="selectedDemo == 'Triangle'"></app-demo-triangle>
@@ -15,3 +16,4 @@
 <app-demo-perspective *ngIf="selectedDemo == 'Perspective'"></app-demo-perspective>
 <app-demo-light *ngIf="selectedDemo == 'Light'"></app-demo-light>
 <app-demo-texture *ngIf="selectedDemo == 'Texture'"></app-demo-texture>
+<app-demo-multiple *ngIf="selectedDemo == 'Multiple'"></app-demo-multiple>

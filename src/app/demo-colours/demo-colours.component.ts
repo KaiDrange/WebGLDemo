@@ -35,7 +35,7 @@ export class DemoColoursComponent implements OnInit {
   initWebGL() {
     let gl = this.glCanvas.nativeElement.getContext('webgl');
     if (!gl) {
-      gl = this.glCanvas.nativeElement.getContext("experimental-webgl");
+      gl = this.glCanvas.nativeElement.getContext("experimental-webgl") as WebGLRenderingContext;
     }
     if (!gl) {
       console.error("WebGL not supported");
@@ -132,10 +132,11 @@ export class DemoColoursComponent implements OnInit {
       return;
     }
    
-    if (this.gl.canvas.width != this.gl.canvas.clientWidth || this.gl.canvas.height != this.gl.canvas.clientHeight) {
-        this.gl.canvas.width  = this.gl.canvas.clientWidth;
-        this.gl.canvas.height = this.gl.canvas.clientHeight;
-        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);  
+    const canvas = this.gl.canvas as HTMLCanvasElement;
+    if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
+        canvas.width  = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        this.gl.viewport(0, 0, canvas.width, canvas.height);
       }
   }
 }

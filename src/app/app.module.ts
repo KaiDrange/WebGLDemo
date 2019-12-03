@@ -12,6 +12,7 @@ import { DemoCubeComponent } from './demo-cube/demo-cube.component';
 import { DemoPerspectiveComponent } from './demo-perspective/demo-perspective.component';
 import { DemoLightComponent } from './demo-light/demo-light.component';
 import { DemoTextureComponent } from './demo-texture/demo-texture.component';
+import { DemoMultipleComponent } from './demo-multiple/demo-multiple.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DemoTextureComponent } from './demo-texture/demo-texture.component';
     DemoCubeComponent,
     DemoPerspectiveComponent,
     DemoLightComponent,
-    DemoTextureComponent
+    DemoTextureComponent,
+    DemoMultipleComponent
   ],
   imports: [
     BrowserModule,
